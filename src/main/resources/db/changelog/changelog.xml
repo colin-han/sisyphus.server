@@ -1,0 +1,42 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="1" author="Colin">
+        <createTable tableName="users">
+            <column name="username" type="varchar(100)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="boolean" defaultValue="true">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP"/>
+        </createTable>
+        <createTable tableName="authorities">
+            <column name="username" type="varchar(100)">
+                <constraints nullable="false" foreignKeyName="fk_authorities_users_username"
+                             referencedTableName="users" referencedColumnNames="username"/>
+            </column>
+            <column name="authority" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createIndex indexName="idx_authorities_uniq" tableName="authorities" unique="true">
+            <column name="username"/>
+            <column name="authority"/>
+        </createIndex>
+        <insert tableName="users">
+            <column name="username" value="admin"/>
+            <column name="password" value="{noop}123456"/>
+            <column name="enabled" value="true"/>
+        </insert>
+        <insert tableName="authorities">
+            <column name="username" value="admin"/>
+            <column name="authority" value="ROLE_ADMIN"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
