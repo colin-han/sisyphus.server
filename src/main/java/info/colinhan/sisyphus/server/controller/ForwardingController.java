@@ -5,10 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +39,7 @@ public class ForwardingController {
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
             if (headerName.equalsIgnoreCase("accept-encoding")) {
+                headers.add(headerName, MediaType.ALL_VALUE);
                 continue;
             }
             Enumeration<String> headerValues = request.getHeaders(headerName);
@@ -51,22 +49,18 @@ public class ForwardingController {
             }
         }
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(
+        ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
                 targetUrl,
                 HttpMethod.GET,
                 new HttpEntity<>(headers),
-                String.class
+                byte[].class
         );
 
-        HttpHeaders responseHeaders = responseEntity.getHeaders();
-        for (String headerName : responseHeaders.keySet()) {
-            for (String headerValue : responseHeaders.get(headerName)) {
-                response.addHeader(headerName, headerValue);
-            }
-        }
-
-        response.getWriter().write(responseEntity.getBody());
-        response.getWriter().flush();
-        response.setStatus(responseEntity.getStatusCodeValue());
+        byte[] body = responseEntity.getBody();
+        response.setContentType(responseEntity.getHeaders().getContentType().toString());
+        response.getOutputStream().write(body);
+        response.getOutputStream().close();
+        response.setContentLength(body.length);
+        response.setStatus(responseEntity.getStatusCode().value());
     }
 }

@@ -4,28 +4,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
 @Entity(name = "users")
-public class User {
+public class UserEntity {
     @Id
-    private Long id;
     private String username;
     private String password;
     private boolean enabled = true;
 
-    public User() {
+    public UserEntity() {
     }
 
-    public User(String username, String password, boolean enabled) {
+    public UserEntity(String username, String password, boolean enabled) {
         this.username = username;
         this.password = password;
         this.enabled = enabled;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getUsername() {
