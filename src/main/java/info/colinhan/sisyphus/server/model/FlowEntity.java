@@ -4,8 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.sql.Date;
-import java.sql.Time;
+import java.sql.Timestamp;
 
 @Entity(name = "flows")
 public class FlowEntity {
@@ -18,17 +17,19 @@ public class FlowEntity {
     private String code;
     private String model;
 
+    @Column(name = "created_by", nullable = false)
+    private String createdByUsername;
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "created_by")
+    @JoinColumn(name = "created_by", insertable = false, updatable = false)
     private UserEntity createdBy;
 
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
-    private Time createdAt;
+    private Timestamp createdAt;
 
     @Column(name = "updated_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
-    private Time updatedAt;
+    private Timestamp updatedAt;
 
     public void setId(Long id) {
         this.id = id;
@@ -70,6 +71,14 @@ public class FlowEntity {
         this.model = model;
     }
 
+    public String getCreatedByUsername() {
+        return createdByUsername;
+    }
+
+    public void setCreatedByUsername(String createdByUsername) {
+        this.createdByUsername = createdByUsername;
+    }
+
     public UserEntity getCreatedBy() {
         return createdBy;
     }
@@ -78,19 +87,19 @@ public class FlowEntity {
         this.createdBy = createdBy;
     }
 
-    public Time getCreatedAt() {
+    public Timestamp getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Time createdAt) {
+    public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Time getUpdatedAt() {
+    public Timestamp getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Time updatedAt) {
+    public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
     }
 

@@ -1,19 +1,18 @@
 package info.colinhan.sisyphus.server.controller;
 
 import info.colinhan.sisyphus.server.dto.FlowEntityDto;
+import info.colinhan.sisyphus.server.dto.GetFlowSvgRequest;
+import info.colinhan.sisyphus.server.dto.GetFlowSvgResponse;
 import info.colinhan.sisyphus.server.model.FlowEntity;
 import info.colinhan.sisyphus.server.repository.FlowRepository;
 import info.colinhan.sisyphus.server.utils.Response;
 import info.colinhan.sisyphus.tartarus.TartarusService;
-import lombok.Data;
-import org.antlr.v4.runtime.tree.pattern.ParseTreePattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.http.HttpResponse;
-import java.sql.Time;
-import java.util.Collections;
+import java.security.Principal;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +32,17 @@ public class FlowController {
     }
 
     @PostMapping("/")
-    public Response<FlowEntityDto> createFlow(@RequestBody FlowEntityDto flowEntityDto) {
-        return Response.of(new FlowEntityDto(flowRepository.save(flowEntityDto.toEntity())));
+    public Response<FlowEntityDto> createFlow(
+            @RequestBody FlowEntityDto flowEntityDto,
+            Principal userPrincipal
+    ) {
+        return Response.of(new FlowEntityDto(flowRepository.save(flowEntityDto.toEntity(userPrincipal.getName()))));
+    }
+
+    @GetMapping("/{flowId}")
+    public Response<FlowEntityDto> getFlow(@PathVariable Long flowId) {
+        FlowEntity flowEntity = flowRepository.findById(flowId).orElseThrow(() -> new RuntimeException("Flow not found"));
+        return Response.of(new FlowEntityDto(flowEntity));
     }
 
     @PutMapping("/{flowId}")
@@ -43,16 +51,23 @@ public class FlowController {
         flowEntity.setName(flowEntityDto.getName());
         flowEntity.setDescription(flowEntityDto.getDescription());
         flowEntity.setCode(flowEntityDto.getCode());
-        flowEntity.setUpdatedAt(new Time(new java.util.Date().getTime()));
+        flowEntity.setUpdatedAt(new Timestamp(new java.util.Date().getTime()));
         return Response.of(new FlowEntityDto(flowRepository.save(flowEntity)));
     }
 
-    @GetMapping("/{flowId}/svg")
-    public ResponseEntity<String> getFlowSvg(@PathVariable Long flowId) {
-        FlowEntity flowEntity = flowRepository.findById(flowId).orElseThrow(() -> new RuntimeException("Flow not found"));
-        String svg = TartarusService.generateSVG(flowEntity.getCode());
-        return ResponseEntity.ok()
-                .header("Content-Type", "image/svg+xml")
-                .body(svg);
+    @PostMapping("/{flowId}/svg")
+    public Response<GetFlowSvgResponse> getFlowSvg(
+            @PathVariable Long flowId,
+            @RequestBody GetFlowSvgRequest request) {
+        String code = request.getCode();
+        if (code == null) {
+            FlowEntity flowEntity = flowRepository.findById(flowId).orElseThrow(() -> new RuntimeException("Flow not found"));
+            code = flowEntity.getCode();
+            if (code == null) {
+                code = "";
+            }
+        }
+        String svg = TartarusService.generateSVG(code);
+        return Response.of(new GetFlowSvgResponse(svg, null));
     }
 }
