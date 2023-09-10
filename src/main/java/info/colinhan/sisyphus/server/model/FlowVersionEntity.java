@@ -12,14 +12,24 @@ import java.sql.Timestamp;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "flows")
-public class FlowEntity {
+@Entity(name = "flow_versions")
+public class FlowVersionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String name;
-    private String description;
+
+    @Column(name = "flow_id", nullable = false)
+    private Long flowId;
+    @ManyToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "flow_id", insertable = false, updatable = false)
+    private FlowEntity flow;
+
+    private int version;
+
+    private String code;
+    private String model;
+
     @Column(name = "created_by", nullable = false)
     private String createdByUsername;
     @ManyToOne(cascade = CascadeType.REMOVE)
@@ -30,28 +40,48 @@ public class FlowEntity {
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
     private Timestamp createdAt;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public Long getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFlowId(Long flowId) {
+        this.flowId = flowId;
     }
 
-    public String getDescription() {
-        return description;
+    public Long getFlowId() {
+        return flowId;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public FlowEntity getFlow() {
+        return flow;
+    }
+
+    public int getVersion() {
+        return version;
+    }
+
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
     }
 
     public String getCreatedByUsername() {
@@ -64,6 +94,10 @@ public class FlowEntity {
 
     public UserEntity getCreatedBy() {
         return createdBy;
+    }
+
+    public void setCreatedBy(UserEntity createdBy) {
+        this.createdBy = createdBy;
     }
 
     public Timestamp getCreatedAt() {

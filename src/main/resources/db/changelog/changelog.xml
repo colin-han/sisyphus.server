@@ -48,8 +48,6 @@
                 <constraints nullable="false"/>
             </column>
             <column name="description" type="varchar(512)"/>
-            <column name="code" type="text"/>
-            <column name="model" type="text"/>
             <column name="created_by" type="varchar(100)">
                 <constraints nullable="false" foreignKeyName="fk_flows_users_username"
                              referencedTableName="users" referencedColumnNames="username"/>
@@ -57,7 +55,27 @@
             <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="updated_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+        </createTable>
+    </changeSet>
+    <changeSet id="3_add_flow_version" author="Colin">
+        <createTable tableName="flow_versions">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="flow_id" type="bigint">
+                <constraints nullable="false" foreignKeyName="fk_flow_versions_flows_id"
+                             referencedTableName="flows" referencedColumnNames="id"/>
+            </column>
+            <column name="version" type="int">
+                <constraints nullable="false" />
+            </column>
+            <column name="code" type="text"/>
+            <column name="model" type="text"/>
+            <column name="created_by" type="varchar(100)">
+                <constraints nullable="false" foreignKeyName="fk_flows_users_username"
+                             referencedTableName="users" referencedColumnNames="username"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
         </createTable>
