@@ -34,7 +34,7 @@ public class FlowController {
         return Response.of(
                 flowRepository.findAll().stream()
                         .map(f -> new FlowEntityDto(f,
-                                flowVersionRepository.findLastByFlowIdOrderByVersion(f.getId()).orElse(null)))
+                                flowVersionRepository.findFirstByFlowIdOrderByVersionDesc(f.getId()).orElse(null)))
                         .collect(Collectors.toList())
         );
     }
@@ -58,7 +58,7 @@ public class FlowController {
     @GetMapping("/{flowId}")
     public Response<FlowEntityDto> getFlow(@PathVariable Long flowId) {
         FlowEntity flowEntity = E.assertPresent(flowRepository.findById(flowId),"Flow");
-        FlowVersionEntity version = flowVersionRepository.findLastByFlowIdOrderByVersion(flowId).orElse(null);
+        FlowVersionEntity version = flowVersionRepository.findFirstByFlowIdOrderByVersionDesc(flowId).orElse(null);
         return Response.of(new FlowEntityDto(flowEntity, version));
     }
 
@@ -89,7 +89,7 @@ public class FlowController {
             @RequestBody GetFlowSvgRequest request) {
         String code = request.getCode();
         if (code == null) {
-            FlowVersionEntity version = E.assertPresent(flowVersionRepository.findLastByFlowIdOrderByVersion(flowId), "Version");
+            FlowVersionEntity version = E.assertPresent(flowVersionRepository.findFirstByFlowIdOrderByVersionDesc(flowId), "Version");
             code = version.getCode();
             if (code == null) {
                 code = "";

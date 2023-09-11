@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface FlowVersionRepository extends JpaRepository<FlowVersionEntity, Long> {
 
-    Optional<FlowVersionEntity> findLastByFlowIdOrderByVersion(long flowId);
+    Optional<FlowVersionEntity> findFirstByFlowIdOrderByVersionDesc(long flowId);
 }
