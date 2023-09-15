@@ -1,5 +1,7 @@
 package info.colinhan.sisyphus.server.model;
 
+import info.colinhan.sisyphus.server.model.converter.FlowConverter;
+import info.colinhan.sisyphus.tartarus.model.Flow;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +30,9 @@ public class FlowVersionEntity {
     private int version;
 
     private String code;
-    private String model;
+
+    @Convert(converter = FlowConverter.class)
+    private Flow model;
 
     @Column(name = "created_by", nullable = false)
     private String createdByUsername;
@@ -39,6 +43,14 @@ public class FlowVersionEntity {
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
     private Timestamp createdAt;
+
+    public Flow getModel() {
+        return model;
+    }
+
+    public void setModel(Flow model) {
+        this.model = model;
+    }
 
     public Long getId() {
         return id;
@@ -74,14 +86,6 @@ public class FlowVersionEntity {
 
     public void setCode(String code) {
         this.code = code;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
     }
 
     public String getCreatedByUsername() {
