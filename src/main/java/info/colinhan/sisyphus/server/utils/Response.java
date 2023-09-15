@@ -11,6 +11,10 @@ public class Response<T> {
         this.error = error;
     }
 
+    public static Response<?> success() {
+        return new Response<>(true, null, null);
+    }
+
     public static <T> Response<T> of(T data) {
         return new Response<>(true, data, null);
     }
