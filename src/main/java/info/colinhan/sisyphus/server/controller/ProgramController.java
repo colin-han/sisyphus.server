@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.attribute.UserPrincipal;
 
 @RestController
-@RequestMapping("/api/flows")
+@RequestMapping("/api/programs")
 public class ProgramController {
     @Autowired
     private ProgramRepository programRepository;
@@ -47,13 +47,12 @@ public class ProgramController {
             modelCompileService.compile(version);
         }
         programRepository.save(ProgramEntity.builder()
-                        .name(request.getName())
-                        .flowVersionId(version.getId())
-                        .createdByUsername(userPrincipal.getName())
-                        .createdAt(U.timeNow())
-                        .updatedAt(U.timeNow())
-                        .status(ProgramStatus.IN_PROGRESS)
-                        .currentOwner(userPrincipal.getName())
+                .name(request.getName())
+                .flowVersionId(version.getId())
+                .createdByUsername(userPrincipal.getName())
+                .createdAt(U.timeNow())
+                .updatedAt(U.timeNow())
+                .status(ProgramStatus.IN_PROGRESS)
                 .build());
         return Response.success();
     }

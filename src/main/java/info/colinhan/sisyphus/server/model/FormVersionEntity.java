@@ -1,6 +1,7 @@
 package info.colinhan.sisyphus.server.model;
 
-import info.colinhan.sisyphus.server.utils.ProgramStatus;
+import info.colinhan.sisyphus.server.model.converter.FlowConverter;
+import info.colinhan.sisyphus.tartarus.model.Flow;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,29 +10,26 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.UUID;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "programs")
-public class ProgramEntity {
+@Entity(name = "form_versions")
+public class FormVersionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String name;
 
-    @Column(name = "flow_version_id", nullable = false)
-    private long flowVersionId;
+    @Column(name = "form_id", nullable = false)
+    private Long formId;
     @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "flow_version_id", insertable = false, updatable = false)
-    private FlowVersionEntity flowVersion;
+    @JoinColumn(name = "form_id", insertable = false, updatable = false)
+    private FormEntity form;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private ProgramStatus status;
+    private int version;
+
+    private String code;
 
     @Column(name = "created_by", nullable = false)
     private String createdByUsername;
@@ -43,13 +41,6 @@ public class ProgramEntity {
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
     private Timestamp createdAt;
 
-    @Column(name = "updated_at")
-    @JdbcTypeCode(SqlTypes.TIMESTAMP)
-    private Timestamp updatedAt;
-
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<ProgramVariableEntity> variables;
-
     public Long getId() {
         return id;
     }
@@ -58,24 +49,32 @@ public class ProgramEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Long getFormId() {
+        return formId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFormId(Long formId) {
+        this.formId = formId;
     }
 
-    public long getFlowVersionId() {
-        return flowVersionId;
+    public FormEntity getForm() {
+        return form;
     }
 
-    public void setFlowVersionId(long flowVersionId) {
-        this.flowVersionId = flowVersionId;
+    public int getVersion() {
+        return version;
     }
 
-    public FlowVersionEntity getFlowVersion() {
-        return flowVersion;
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public String getCreatedByUsername() {
@@ -90,27 +89,15 @@ public class ProgramEntity {
         return createdBy;
     }
 
+    public void setCreatedBy(UserEntity createdBy) {
+        this.createdBy = createdBy;
+    }
+
     public Timestamp getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Timestamp getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Timestamp updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    public List<ProgramVariableEntity> getVariables() {
-        return variables;
-    }
-
-    public FlowEntity getFlow() {
-        return this.getFlowVersion().getFlow();
     }
 }

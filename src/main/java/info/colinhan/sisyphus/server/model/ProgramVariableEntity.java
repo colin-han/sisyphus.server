@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,6 +21,9 @@ public class ProgramVariableEntity {
     private String name;
     @Column(name = "value", nullable = false)
     private String value;
+
+    @Column(name = "updated_at", nullable = false)
+    private Timestamp updatedAt;
 
     @Column(name = "program_id", nullable = false)
     private long programId;
@@ -60,5 +65,13 @@ public class ProgramVariableEntity {
 
     public ProgramEntity getProgram() {
         return program;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
