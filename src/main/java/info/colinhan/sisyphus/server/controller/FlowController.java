@@ -2,7 +2,7 @@ package info.colinhan.sisyphus.server.controller;
 
 import info.colinhan.sisyphus.server.dto.CreateFlowRequest;
 import info.colinhan.sisyphus.server.dto.FlowEntityDto;
-import info.colinhan.sisyphus.server.dto.GetFlowSvgRequest;
+import info.colinhan.sisyphus.server.dto.ParseCodeRequest;
 import info.colinhan.sisyphus.server.dto.GetFlowSvgResponse;
 import info.colinhan.sisyphus.server.exception.BadRequestException;
 import info.colinhan.sisyphus.server.exception.E;
@@ -86,7 +86,7 @@ public class FlowController {
     @PostMapping("/{flowId}/svg")
     public Response<GetFlowSvgResponse> getFlowSvg(
             @PathVariable Long flowId,
-            @RequestBody GetFlowSvgRequest request) {
+            @RequestBody ParseCodeRequest request) {
         String code = request.getCode();
         if (code == null) {
             FlowVersionEntity version = E.assertPresent(flowVersionRepository.findFirstByFlowIdOrderByVersionDesc(flowId), "Version");

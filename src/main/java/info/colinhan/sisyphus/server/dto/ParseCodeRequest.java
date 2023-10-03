@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetFlowSvgRequest {
+public class ParseCodeRequest {
     private String code;
 }
