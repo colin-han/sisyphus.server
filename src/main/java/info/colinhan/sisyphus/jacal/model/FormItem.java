@@ -13,4 +13,5 @@ public class FormItem {
     private String name;
     private FormItemType type;
     private String title;
+    private boolean required;
 }

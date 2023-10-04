@@ -4,6 +4,7 @@ import info.colinhan.sisyphus.jacal.model.Form;
 import info.colinhan.sisyphus.jacal.model.FormItem;
 import info.colinhan.sisyphus.jacal.model.FormItemType;
 import info.colinhan.sisyphus.jacal.model.FormItemTypes;
+import org.apache.logging.log4j.util.Strings;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -21,9 +22,12 @@ public class JacalParser {
         );
     }
 
-    private static Pattern parseRegex = Pattern.compile("^(\\w+)\\s+(\\w+)\\s+(.*)$");
+    private static Pattern parseRegex = Pattern.compile("^(?<req>\\*)?\\s*(?<name>\\w+)\\s+(?<type>\\w+)(\\s+(?<title>.*))?$");
 
     public static FormItem parseLine(String line) {
+        if (Strings.isBlank(line)) {
+            return null; // empty line
+        }
         if (line.startsWith("#")) {
             return null; // comments
         }
@@ -32,11 +36,12 @@ public class JacalParser {
             throw new RuntimeException("Jacal parse failed!");
         }
 
-        String name = matcher.group(1);
-        String type = matcher.group(2);
-        String title = matcher.group(3);
+        String name = matcher.group("name");
+        String type = matcher.group("type");
+        String title = matcher.group("title");
+        boolean required = matcher.group("req") != null;
 
         FormItemType type1 = FormItemTypes.get(type);
-        return new FormItem(name, type1, title);
+        return new FormItem(name, type1, title, required);
     }
 }

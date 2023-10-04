@@ -28,7 +28,7 @@ public class FormItemTypes {
     private static Map<String, FormItemType> types = new HashMap<>();
 
     public static FormItemType get(String name) {
-        return types.get(name);
+        return types.get(name.toUpperCase());
     }
 
     private static TheType createType(String name, FormItemValueType valueType) {

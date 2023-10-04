@@ -3,16 +3,16 @@ package info.colinhan.sisyphus.server.dto;
 import info.colinhan.sisyphus.jacal.model.Form;
 
 public class GetFormModelResponse {
-    private final Form form;
+    private final Form model;
     private final String error;
 
-    public GetFormModelResponse(Form form, String error) {
-        this.form = form;
+    public GetFormModelResponse(Form model, String error) {
+        this.model = model;
         this.error = error;
     }
 
-    public Form getForm() {
-        return form;
+    public Form getModel() {
+        return model;
     }
 
     public String getError() {
