@@ -4,4 +4,6 @@ import info.colinhan.sisyphus.server.model.FlowVersionEntity;
 
 public interface ModelCompileService {
     void compile(FlowVersionEntity version);
+
+    String generateFlowSVG(String code, Long flowId);
 }

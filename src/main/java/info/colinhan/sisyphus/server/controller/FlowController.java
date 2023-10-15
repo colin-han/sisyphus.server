@@ -10,8 +10,8 @@ import info.colinhan.sisyphus.server.model.FlowEntity;
 import info.colinhan.sisyphus.server.model.FlowVersionEntity;
 import info.colinhan.sisyphus.server.repository.FlowRepository;
 import info.colinhan.sisyphus.server.repository.FlowVersionRepository;
+import info.colinhan.sisyphus.server.service.ModelCompileService;
 import info.colinhan.sisyphus.server.utils.Response;
-import info.colinhan.sisyphus.tartarus.TartarusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +28,8 @@ public class FlowController {
     private FlowRepository flowRepository;
     @Autowired
     private FlowVersionRepository flowVersionRepository;
+    @Autowired
+    private ModelCompileService modelCompileService;
 
     @GetMapping("/")
     public Response<List<FlowEntityDto>> getFlows() {
@@ -95,7 +97,7 @@ public class FlowController {
                 code = "";
             }
         }
-        String svg = TartarusService.generateSVG(code);
+        String svg = modelCompileService.generateFlowSVG(code, flowId);
         return Response.of(new GetFlowSvgResponse(svg, null));
     }
 }

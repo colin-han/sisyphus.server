@@ -1,9 +1,8 @@
 package info.colinhan.sisyphus.server.dto;
 
+import info.colinhan.sisyphus.model.VariableType;
 import info.colinhan.sisyphus.server.model.FlowEntity;
 import info.colinhan.sisyphus.server.model.ProgramEntity;
-import info.colinhan.sisyphus.server.utils.VariableType;
-import jakarta.persistence.Tuple;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
