@@ -1,7 +1,6 @@
 package info.colinhan.sisyphus.server.dto;
 
 import info.colinhan.sisyphus.server.model.FlowEntity;
-import info.colinhan.sisyphus.server.model.FlowVersionEntity;
 import info.colinhan.sisyphus.server.model.FormEntity;
 import info.colinhan.sisyphus.server.model.FormVersionEntity;
 import lombok.Data;

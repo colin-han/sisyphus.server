@@ -2,7 +2,6 @@ package info.colinhan.sisyphus.server.model;
 
 import info.colinhan.sisyphus.jacal.model.Form;
 import info.colinhan.sisyphus.server.model.converter.FlowConverter;
-import info.colinhan.sisyphus.tartarus.model.Flow;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

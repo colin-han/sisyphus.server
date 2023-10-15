@@ -10,7 +10,6 @@ import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
 import java.util.List;
-import java.util.UUID;
 
 @Builder
 @NoArgsConstructor
