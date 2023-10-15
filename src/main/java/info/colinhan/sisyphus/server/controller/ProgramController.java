@@ -12,6 +12,7 @@ import info.colinhan.sisyphus.server.service.ModelCompileService;
 import info.colinhan.sisyphus.server.utils.ProgramStatus;
 import info.colinhan.sisyphus.server.utils.Response;
 import info.colinhan.sisyphus.server.utils.U;
+import info.colinhan.sisyphus.tartarus.exceptions.TartarusParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,11 @@ public class ProgramController {
     ) {
         FlowVersionEntity version = E.assertPresent(flowVersionRepository.findOneByFlowIdAndVersion(request.getFlowId(), request.getVersion()));
         if (version.getModel() == null) {
-            modelCompileService.compile(version);
+            try {
+                modelCompileService.compileFlow(version);
+            } catch (TartarusParserException e) {
+                return Response.failure(e.getMessage());
+            }
         }
         programRepository.save(ProgramEntity.builder()
                 .name(request.getName())

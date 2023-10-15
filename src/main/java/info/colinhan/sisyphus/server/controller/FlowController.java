@@ -1,9 +1,6 @@
 package info.colinhan.sisyphus.server.controller;
 
-import info.colinhan.sisyphus.server.dto.CreateFlowRequest;
-import info.colinhan.sisyphus.server.dto.FlowEntityDto;
-import info.colinhan.sisyphus.server.dto.ParseCodeRequest;
-import info.colinhan.sisyphus.server.dto.GetFlowSvgResponse;
+import info.colinhan.sisyphus.server.dto.*;
 import info.colinhan.sisyphus.server.exception.BadRequestException;
 import info.colinhan.sisyphus.server.exception.E;
 import info.colinhan.sisyphus.server.model.FlowEntity;
@@ -12,6 +9,7 @@ import info.colinhan.sisyphus.server.repository.FlowRepository;
 import info.colinhan.sisyphus.server.repository.FlowVersionRepository;
 import info.colinhan.sisyphus.server.service.ModelCompileService;
 import info.colinhan.sisyphus.server.utils.Response;
+import info.colinhan.sisyphus.tartarus.exceptions.TartarusParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +63,7 @@ public class FlowController {
     }
 
     @PutMapping("/{flowId}")
-    public Response<FlowEntityDto> updateFlow(
+    public Response<UpdateFlowResponse> updateFlow(
             @PathVariable Long flowId,
             @RequestBody FlowEntityDto flowEntityDto,
             Principal userPrincipal
@@ -77,12 +75,19 @@ public class FlowController {
 
         FlowVersionEntity version = flowEntityDto.toVersion(userPrincipal.getName());
         version.setFlowId(flowId);
+
+        // validate the flow
+        try {
+            modelCompileService.compileFlow(version);
+        } catch (TartarusParserException e) {
+            return Response.of(new UpdateFlowResponse(e.getErrors()));
+        }
         version = flowVersionRepository.save(version);
 
         flowEntity.setDescription(flowEntityDto.getDescription());
         flowEntity = flowRepository.save(flowEntity);
 
-        return Response.of(new FlowEntityDto(flowEntity, version));
+        return Response.of(new UpdateFlowResponse(new FlowEntityDto(flowEntity, version)));
     }
 
     @PostMapping("/{flowId}/svg")
@@ -97,7 +102,11 @@ public class FlowController {
                 code = "";
             }
         }
-        String svg = modelCompileService.generateFlowSVG(code, flowId);
-        return Response.of(new GetFlowSvgResponse(svg, null));
+        try {
+            String svg = modelCompileService.generateFlowSVG(code, flowId);
+            return Response.of(new GetFlowSvgResponse(svg));
+        } catch (TartarusParserException e) {
+            return Response.of(new GetFlowSvgResponse(e.getErrors()));
+        }
     }
 }

@@ -1,26 +1,23 @@
 package info.colinhan.sisyphus.server.dto;
 
 import info.colinhan.sisyphus.tartarus.parser.ParseError;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public class GetFlowSvgResponse {
+public class UpdateFlowResponse {
     private final boolean success;
-    private final String svg;
+    private final FlowEntityDto flow;
     private final List<ParseError> errors;
 
-    public GetFlowSvgResponse(String svg) {
+    public UpdateFlowResponse(FlowEntityDto flow) {
         this.success = true;
-        this.svg = svg;
+        this.flow = flow;
         this.errors = null;
     }
 
-    public GetFlowSvgResponse(List<ParseError> errors) {
+    public UpdateFlowResponse(List<ParseError> errors) {
         this.success = false;
-        this.svg = null;
+        this.flow = null;
         this.errors = errors;
     }
 
@@ -28,8 +25,8 @@ public class GetFlowSvgResponse {
         return success;
     }
 
-    public String getSvg() {
-        return svg;
+    public FlowEntityDto getFlow() {
+        return flow;
     }
 
     public List<ParseError> getErrors() {
