@@ -1,10 +1,10 @@
 package info.colinhan.sisyphus.server.service;
 
 import info.colinhan.sisyphus.server.model.FlowVersionEntity;
-import info.colinhan.sisyphus.tartarus.exceptions.TartarusParserException;
+import info.colinhan.sisyphus.exception.ParserException;
 
 public interface ModelCompileService {
-    void compileFlow(FlowVersionEntity version) throws TartarusParserException;
+    void compileFlow(FlowVersionEntity version) throws ParserException;
 
-    String generateFlowSVG(String code, Long flowId) throws TartarusParserException;
+    String generateFlowSVG(String code, Long flowId) throws ParserException;
 }

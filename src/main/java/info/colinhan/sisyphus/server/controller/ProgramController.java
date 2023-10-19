@@ -12,7 +12,7 @@ import info.colinhan.sisyphus.server.service.ModelCompileService;
 import info.colinhan.sisyphus.server.utils.ProgramStatus;
 import info.colinhan.sisyphus.server.utils.Response;
 import info.colinhan.sisyphus.server.utils.U;
-import info.colinhan.sisyphus.tartarus.exceptions.TartarusParserException;
+import info.colinhan.sisyphus.exception.ParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +47,7 @@ public class ProgramController {
         if (version.getModel() == null) {
             try {
                 modelCompileService.compileFlow(version);
-            } catch (TartarusParserException e) {
+            } catch (ParserException e) {
                 return Response.failure(e.getMessage());
             }
         }

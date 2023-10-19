@@ -1,9 +1,6 @@
 package info.colinhan.sisyphus.server.dto;
 
-import info.colinhan.sisyphus.tartarus.parser.ParseError;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import info.colinhan.sisyphus.exception.ParseError;
 
 import java.util.List;
 

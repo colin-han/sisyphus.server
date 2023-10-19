@@ -1,6 +1,6 @@
 package info.colinhan.sisyphus.server.dto;
 
-import info.colinhan.sisyphus.tartarus.parser.ParseError;
+import info.colinhan.sisyphus.exception.ParseError;
 
 import java.util.List;
 

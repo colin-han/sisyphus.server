@@ -9,7 +9,7 @@ import info.colinhan.sisyphus.server.repository.FlowRepository;
 import info.colinhan.sisyphus.server.repository.FlowVersionRepository;
 import info.colinhan.sisyphus.server.service.ModelCompileService;
 import info.colinhan.sisyphus.server.utils.Response;
-import info.colinhan.sisyphus.tartarus.exceptions.TartarusParserException;
+import info.colinhan.sisyphus.exception.ParserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,7 +79,7 @@ public class FlowController {
         // validate the flow
         try {
             modelCompileService.compileFlow(version);
-        } catch (TartarusParserException e) {
+        } catch (ParserException e) {
             return Response.of(new UpdateFlowResponse(e.getErrors()));
         }
         version = flowVersionRepository.save(version);
@@ -105,7 +105,7 @@ public class FlowController {
         try {
             String svg = modelCompileService.generateFlowSVG(code, flowId);
             return Response.of(new GetFlowSvgResponse(svg));
-        } catch (TartarusParserException e) {
+        } catch (ParserException e) {
             return Response.of(new GetFlowSvgResponse(e.getErrors()));
         }
     }

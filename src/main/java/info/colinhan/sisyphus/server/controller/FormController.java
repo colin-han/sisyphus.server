@@ -1,5 +1,6 @@
 package info.colinhan.sisyphus.server.controller;
 
+import info.colinhan.sisyphus.exception.ParserException;
 import info.colinhan.sisyphus.jacal.model.Form;
 import info.colinhan.sisyphus.jacal.parser.JacalParser;
 import info.colinhan.sisyphus.server.dto.*;
@@ -93,7 +94,11 @@ public class FormController {
                 code = "";
             }
         }
-        Form form = JacalParser.parse(code);
-        return Response.of(new GetFormModelResponse(form, null));
+        try {
+            Form form = JacalParser.parse(code);
+            return Response.of(new GetFormModelResponse(form));
+        } catch (ParserException e) {
+            return Response.of(new GetFormModelResponse(e.getErrors()));
+        }
     }
 }
