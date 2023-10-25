@@ -145,11 +145,33 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+        <createTable tableName="program_form_versions">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="program_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_program_form_versions_programs_id"
+                             referencedTableName="programs"
+                             referencedColumnNames="id"
+                             />
+            </column>
+            <column name="form_version_id" type="bigint">
+                <constraints nullable="false"
+                             foreignKeyName="fk_program_form_versions_form_versions_id"
+                             referencedTableName="form_versions"
+                             referencedColumnNames="id"
+                             />
+            </column>
+        </createTable>
         <createTable tableName="program_variables">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type" type="varchar(100)">
                 <constraints nullable="false"/>
             </column>
             <column name="value" type="varchar(100)">

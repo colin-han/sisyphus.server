@@ -5,7 +5,7 @@ import info.colinhan.sisyphus.jacal.model.Form;
 import info.colinhan.sisyphus.jacal.model.FormItem;
 import info.colinhan.sisyphus.jacal.model.FormItemType;
 import info.colinhan.sisyphus.jacal.model.FormItemTypes;
-import info.colinhan.sisyphus.exception.ParserException;
+import info.colinhan.sisyphus.exception.ParseException;
 import org.apache.logging.log4j.util.Strings;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JacalParser {
-    public static Form parse(String code) throws ParserException {
+    public static Form parse(String code) throws ParseException {
         List<FormItem> list = new ArrayList<>();
         List<ParseError> errors = new ArrayList<>();
         String[] split = code.split("\n");
@@ -27,7 +27,7 @@ public class JacalParser {
             }
         }
         if (!errors.isEmpty()) {
-            throw new ParserException(errors);
+            throw new ParseException(errors);
         }
         return new Form(list);
     }

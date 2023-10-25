@@ -10,6 +10,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @NoArgsConstructor
@@ -27,6 +28,14 @@ public class ProgramEntity {
     @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "flow_version_id", insertable = false, updatable = false)
     private FlowVersionEntity flowVersion;
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(
+            name = "program_form_versions",
+            joinColumns = @JoinColumn(name = "program_id"),
+            inverseJoinColumns = @JoinColumn(name = "form_version_id")
+    )
+    private Set<FormVersionEntity> formVersions;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
@@ -75,6 +84,14 @@ public class ProgramEntity {
 
     public FlowVersionEntity getFlowVersion() {
         return flowVersion;
+    }
+
+    public Set<FormVersionEntity> getFormVersions() {
+        return formVersions;
+    }
+
+    public void setFormVersions(Set<FormVersionEntity> formVersions) {
+        this.formVersions = formVersions;
     }
 
     public String getCreatedByUsername() {

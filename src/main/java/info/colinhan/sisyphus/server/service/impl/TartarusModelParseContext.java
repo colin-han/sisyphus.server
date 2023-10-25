@@ -9,13 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-public class MockModelParseContext implements ModelParseContext {
+public class TartarusModelParseContext implements ModelParseContext {
     private final Stack<Map<String, VariableType>> variableTypes = new Stack<>();
 
-    public MockModelParseContext() {
+    public TartarusModelParseContext() {
         this.pushFrame();
-
-        this.setVariableType("stakeholders", VariableTypes.ARRAY(VariableTypes.USER));
     }
 
     @Override

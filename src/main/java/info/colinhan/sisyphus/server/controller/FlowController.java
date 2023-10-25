@@ -1,5 +1,6 @@
 package info.colinhan.sisyphus.server.controller;
 
+import info.colinhan.sisyphus.exception.ParseError;
 import info.colinhan.sisyphus.server.dto.*;
 import info.colinhan.sisyphus.server.exception.BadRequestException;
 import info.colinhan.sisyphus.server.exception.E;
@@ -8,8 +9,9 @@ import info.colinhan.sisyphus.server.model.FlowVersionEntity;
 import info.colinhan.sisyphus.server.repository.FlowRepository;
 import info.colinhan.sisyphus.server.repository.FlowVersionRepository;
 import info.colinhan.sisyphus.server.service.ModelCompileService;
-import info.colinhan.sisyphus.server.utils.Response;
-import info.colinhan.sisyphus.exception.ParserException;
+import info.colinhan.sisyphus.exception.ParseException;
+import info.colinhan.sisyphus.util.ResultOrErrors;
+import info.colinhan.sisyphus.util.ResultOrErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,8 +32,8 @@ public class FlowController {
     private ModelCompileService modelCompileService;
 
     @GetMapping("/")
-    public Response<List<FlowEntityDto>> getFlows() {
-        return Response.of(
+    public ResultOrErrors<List<FlowEntityDto>, String> getFlows() {
+        return ResultOrErrors.of(
                 flowRepository.findAll().stream()
                         .map(f -> new FlowEntityDto(f,
                                 flowVersionRepository.findFirstByFlowIdOrderByVersionDesc(f.getId()).orElse(null)))
@@ -40,7 +42,7 @@ public class FlowController {
     }
 
     @PostMapping("/")
-    public Response<FlowEntityDto> createFlow(
+    public ResultOrErrors<FlowEntityDto, String> createFlow(
             @RequestBody CreateFlowRequest request,
             Principal userPrincipal
     ) {
@@ -52,18 +54,18 @@ public class FlowController {
                         .createdAt(new Timestamp(new Date().getTime()))
                         .build()
         );
-        return Response.of(new FlowEntityDto(flow, null));
+        return ResultOrErrors.of(new FlowEntityDto(flow, null));
     }
 
     @GetMapping("/{flowId}")
-    public Response<FlowEntityDto> getFlow(@PathVariable Long flowId) {
+    public ResultOrErrors<FlowEntityDto, String> getFlow(@PathVariable Long flowId) {
         FlowEntity flowEntity = E.assertPresent(flowRepository.findById(flowId),"Flow");
         FlowVersionEntity version = flowVersionRepository.findFirstByFlowIdOrderByVersionDesc(flowId).orElse(null);
-        return Response.of(new FlowEntityDto(flowEntity, version));
+        return ResultOrErrors.of(new FlowEntityDto(flowEntity, version));
     }
 
     @PutMapping("/{flowId}")
-    public Response<UpdateFlowResponse> updateFlow(
+    public ResultOrErrors<FlowEntityDto, ParseError> updateFlow(
             @PathVariable Long flowId,
             @RequestBody FlowEntityDto flowEntityDto,
             Principal userPrincipal
@@ -79,19 +81,19 @@ public class FlowController {
         // validate the flow
         try {
             modelCompileService.compileFlow(version);
-        } catch (ParserException e) {
-            return Response.of(new UpdateFlowResponse(e.getErrors()));
+        } catch (ParseException e) {
+            return ResultOrErrors.error(e.getErrors());
         }
         version = flowVersionRepository.save(version);
 
         flowEntity.setDescription(flowEntityDto.getDescription());
         flowEntity = flowRepository.save(flowEntity);
 
-        return Response.of(new UpdateFlowResponse(new FlowEntityDto(flowEntity, version)));
+        return ResultOrErrors.of(new FlowEntityDto(flowEntity, version));
     }
 
     @PostMapping("/{flowId}/svg")
-    public Response<GetFlowSvgResponse> getFlowSvg(
+    public ResultOrErrors<String, ParseError> getFlowSvg(
             @PathVariable Long flowId,
             @RequestBody ParseCodeRequest request) {
         String code = request.getCode();
@@ -104,9 +106,9 @@ public class FlowController {
         }
         try {
             String svg = modelCompileService.generateFlowSVG(code, flowId);
-            return Response.of(new GetFlowSvgResponse(svg));
-        } catch (ParserException e) {
-            return Response.of(new GetFlowSvgResponse(e.getErrors()));
+            return ResultOrErrors.of(svg);
+        } catch (ParseException e) {
+            return ResultOrErrors.error(e.getErrors());
         }
     }
 }

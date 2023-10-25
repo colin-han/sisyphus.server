@@ -1,6 +1,7 @@
 package info.colinhan.sisyphus.server.controller;
 
-import info.colinhan.sisyphus.exception.ParserException;
+import info.colinhan.sisyphus.exception.ParseError;
+import info.colinhan.sisyphus.exception.ParseException;
 import info.colinhan.sisyphus.jacal.model.Form;
 import info.colinhan.sisyphus.jacal.parser.JacalParser;
 import info.colinhan.sisyphus.server.dto.*;
@@ -10,7 +11,8 @@ import info.colinhan.sisyphus.server.model.FormEntity;
 import info.colinhan.sisyphus.server.model.FormVersionEntity;
 import info.colinhan.sisyphus.server.repository.FormRepository;
 import info.colinhan.sisyphus.server.repository.FormVersionRepository;
-import info.colinhan.sisyphus.server.utils.Response;
+import info.colinhan.sisyphus.util.ResultOrErrors;
+import info.colinhan.sisyphus.util.ResultOrErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,8 @@ public class FormController {
     private FormVersionRepository formVersionRepository;
 
     @GetMapping("/")
-    public Response<List<FormInfo>> getForms() {
-        return Response.of(
+    public ResultOrErrors<List<FormInfo>, String> getForms() {
+        return ResultOrErrors.of(
                 formRepository.findAll().stream()
                         .map(f -> new FormInfo(f,
                                 formVersionRepository.findFirstByFormIdOrderByVersionDesc(f.getId()).orElse(null)))
@@ -39,7 +41,7 @@ public class FormController {
     }
 
     @PostMapping("/")
-    public Response<FormInfo> createForm(
+    public ResultOrErrors<FormInfo, String> createForm(
             @RequestBody CreateFlowRequest request,
             Principal userPrincipal
     ) {
@@ -51,18 +53,18 @@ public class FormController {
                         .createdAt(new Timestamp(new Date().getTime()))
                         .build()
         );
-        return Response.of(new FormInfo(flow, null));
+        return ResultOrErrors.of(new FormInfo(flow, null));
     }
 
     @GetMapping("/{formId}")
-    public Response<FormInfo> getForm(@PathVariable Long formId) {
+    public ResultOrErrors<FormInfo, String> getForm(@PathVariable Long formId) {
         FormEntity FormEntity = E.assertPresent(formRepository.findById(formId),"Flow");
         FormVersionEntity version = formVersionRepository.findFirstByFormIdOrderByVersionDesc(formId).orElse(null);
-        return Response.of(new FormInfo(FormEntity, version));
+        return ResultOrErrors.of(new FormInfo(FormEntity, version));
     }
 
     @PutMapping("/{formId}")
-    public Response<FormInfo> updateForm(
+    public ResultOrErrors<FormInfo, String> updateForm(
             @PathVariable Long formId,
             @RequestBody FormInfo FormInfo,
             Principal userPrincipal
@@ -79,11 +81,11 @@ public class FormController {
         FormEntity.setDescription(FormInfo.getDescription());
         FormEntity = formRepository.save(FormEntity);
 
-        return Response.of(new FormInfo(FormEntity, version));
+        return ResultOrErrors.of(new FormInfo(FormEntity, version));
     }
 
     @PostMapping("/{formId}/model")
-    public Response<GetFormModelResponse> getFormModel(
+    public ResultOrErrors<Form, ParseError> getFormModel(
             @PathVariable Long formId,
             @RequestBody ParseCodeRequest request) {
         String code = request.getCode();
@@ -96,9 +98,9 @@ public class FormController {
         }
         try {
             Form form = JacalParser.parse(code);
-            return Response.of(new GetFormModelResponse(form));
-        } catch (ParserException e) {
-            return Response.of(new GetFormModelResponse(e.getErrors()));
+            return ResultOrErrors.of(form);
+        } catch (ParseException e) {
+            return ResultOrErrors.error(e.getErrors());
         }
     }
 }

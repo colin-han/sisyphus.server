@@ -70,16 +70,6 @@ public class GetProgramInfoResponse {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProgramInfo {
-        private long id;
-        private String name;
-        private List<String> variables;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class VariableInfo {
         private String name;
         private VariableType type;

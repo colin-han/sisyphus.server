@@ -79,6 +79,14 @@ public class FormVersionEntity {
         this.code = code;
     }
 
+    public Form getModel() {
+        return model;
+    }
+
+    public void setModel(Form model) {
+        this.model = model;
+    }
+
     public String getCreatedByUsername() {
         return createdByUsername;
     }

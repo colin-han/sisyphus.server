@@ -1,5 +1,8 @@
 package info.colinhan.sisyphus.jacal.model;
 
+import info.colinhan.sisyphus.model.VariableType;
+import info.colinhan.sisyphus.model.VariableTypes;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,9 +11,9 @@ public class FormItemTypes {
 
     private static class TheType implements FormItemType {
         private final String name;
-        private final FormItemValueType valueType;
+        private final VariableType valueType;
 
-        public TheType(String name, FormItemValueType valueType) {
+        public TheType(String name, VariableType valueType) {
             this.name = name;
             this.valueType = valueType;
         }
@@ -21,7 +24,7 @@ public class FormItemTypes {
         }
 
         @Override
-        public FormItemValueType getValueType() {
+        public VariableType getValueType() {
             return valueType;
         }
     }
@@ -31,13 +34,13 @@ public class FormItemTypes {
         return types.get(name.toUpperCase());
     }
 
-    private static TheType createType(String name, FormItemValueType valueType) {
+    private static TheType createType(String name, VariableType valueType) {
         TheType value = new TheType(name, valueType);
         types.put(name, value);
         return value;
     }
 
-    public final static FormItemType TEXT = createType("TEXT", FormItemValueType.STRING);
-    public final static FormItemType NUMBER = createType("NUMBER", FormItemValueType.NUMBER);
-    public final static FormItemType TOGGLE = createType("TOGGLE", FormItemValueType.BOOLEAN);
+    public final static FormItemType TEXT = createType("TEXT", VariableTypes.STRING);
+    public final static FormItemType NUMBER = createType("NUMBER", VariableTypes.NUMBER);
+    public final static FormItemType TOGGLE = createType("TOGGLE", VariableTypes.BOOLEAN);
 }
