@@ -21,10 +21,7 @@ public class FlowEntity {
     private String name;
     private String description;
     @Column(name = "created_by", nullable = false)
-    private String createdByUsername;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "created_by", insertable = false, updatable = false)
-    private UserEntity createdBy;
+    private String createdBy;
 
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
@@ -54,16 +51,12 @@ public class FlowEntity {
         this.description = description;
     }
 
-    public String getCreatedByUsername() {
-        return createdByUsername;
-    }
-
-    public void setCreatedByUsername(String createdByUsername) {
-        this.createdByUsername = createdByUsername;
-    }
-
-    public UserEntity getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
+    }
+
+    public void setCreatedBy(String createdByUsername) {
+        this.createdBy = createdByUsername;
     }
 
     public Timestamp getCreatedAt() {

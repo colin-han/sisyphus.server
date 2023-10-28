@@ -7,6 +7,7 @@ import info.colinhan.sisyphus.jacal.model.FormItem;
 import info.colinhan.sisyphus.jacal.parser.JacalParser;
 import info.colinhan.sisyphus.server.dto.FlowError;
 import info.colinhan.sisyphus.server.dto.FlowInfo;
+import info.colinhan.sisyphus.server.dto.GetProgramInfoResponse;
 import info.colinhan.sisyphus.server.dto.ProgramInfo;
 import info.colinhan.sisyphus.server.model.*;
 import info.colinhan.sisyphus.server.repository.*;
@@ -38,6 +39,46 @@ public class ProgramServiceImpl implements ProgramService {
     private FlowRepository flowRepository;
     @Autowired
     private ProgramVariableRepository programVariableRepository;
+
+    @Override
+    public GetProgramInfoResponse buildProgramInfo(List<ProgramEntity> programs) {
+        Map<FlowEntity, List<ProgramEntity>> flowMap = programs.stream()
+                .collect(Collectors.groupingBy(this::findFlow));
+
+        return new GetProgramInfoResponse(flowMap.keySet().stream()
+                .map(flow -> GetProgramInfoResponse.FlowInfo.builder()
+                                .id(flow.getId())
+                                .name(flow.getName())
+                                .programs(flowMap.get(flow).stream()
+                                                .map(program -> ProgramInfo.builder()
+                                                                .id(program.getId())
+                                                                .name(program.getName())
+                                                                .variables(Collections.emptyList())
+//                                                                .variables(program.getVariables().stream()
+//                                                                        .map(variable -> variable.getName())
+//                                                                        .collect(Collectors.toList())
+//                                                                )
+                                                                .build()
+                                                )
+                                                .collect(Collectors.toList())
+                                )
+                                .variables(Collections.emptyList())
+//                                .variables(flow.getVariables().stream()
+//                                        .map(variable -> VariableInfo.builder()
+//                                                  .name(variable.getName())
+//                                                  .type(variable.getType())
+//                                                  .build()
+//                                        )
+//                                        .collect(Collectors.toList())
+//                                )
+                                .build()
+                )
+                .collect(Collectors.toList()));
+    }
+
+    private FlowEntity findFlow(ProgramEntity programEntity) {
+        return flowRepository.findById(flowVersionRepository.findById(programEntity.getFlowVersionId()).orElseThrow().getFlowId()).orElseThrow();
+    }
 
     private ResultWithErrors<FlowInfo, FlowError> buildFlow(FlowEntity flowEntity) {
         Long flowId = flowEntity.getId();
@@ -108,7 +149,8 @@ public class ProgramServiceImpl implements ProgramService {
 
     @Override
     public ResultOrErrors<ProgramInfo, FlowError> createProgram(FlowVersionEntity flowVersion, String name, String creator) {
-        ResultWithErrors<FlowInfo, FlowError> availableFlowInfo = buildFlow(flowVersion.getFlow());
+        FlowEntity flow = flowRepository.findById(flowVersion.getFlowId()).orElseThrow();
+        ResultWithErrors<FlowInfo, FlowError> availableFlowInfo = buildFlow(flow);
         if (!availableFlowInfo.errors().isEmpty()) {
             return ResultOrErrors.error(availableFlowInfo.errors());
         }
@@ -117,12 +159,13 @@ public class ProgramServiceImpl implements ProgramService {
         ProgramEntity program = programRepository.save(ProgramEntity.builder()
                 .name(name)
                 .flowVersionId(flowVersion.getId())
-                .formVersions(forms)
-                .createdByUsername(creator)
+                .createdBy(creator)
                 .createdAt(U.timeNow())
                 .updatedAt(U.timeNow())
                 .status(ProgramStatus.IN_PROGRESS)
                 .build());
+
+
 
         List<ProgramVariableEntity> variables = new ArrayList<>();
         for (FormVersionEntity form : forms) {

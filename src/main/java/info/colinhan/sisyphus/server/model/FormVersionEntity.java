@@ -23,9 +23,6 @@ public class FormVersionEntity {
 
     @Column(name = "form_id", nullable = false)
     private Long formId;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "form_id", insertable = false, updatable = false)
-    private FormEntity form;
 
     private int version;
 
@@ -34,10 +31,7 @@ public class FormVersionEntity {
     private Form model;
 
     @Column(name = "created_by", nullable = false)
-    private String createdByUsername;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "created_by", insertable = false, updatable = false)
-    private UserEntity createdBy;
+    private String createdBy;
 
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
@@ -57,10 +51,6 @@ public class FormVersionEntity {
 
     public void setFormId(Long formId) {
         this.formId = formId;
-    }
-
-    public FormEntity getForm() {
-        return form;
     }
 
     public int getVersion() {
@@ -87,19 +77,12 @@ public class FormVersionEntity {
         this.model = model;
     }
 
-    public String getCreatedByUsername() {
-        return createdByUsername;
-    }
 
-    public void setCreatedByUsername(String createdByUsername) {
-        this.createdByUsername = createdByUsername;
-    }
-
-    public UserEntity getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UserEntity createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 

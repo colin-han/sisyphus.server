@@ -6,8 +6,8 @@ import info.colinhan.sisyphus.server.model.FlowVersionEntity;
 import info.colinhan.sisyphus.server.repository.FlowVersionRepository;
 import info.colinhan.sisyphus.server.repository.ProgramRepository;
 import info.colinhan.sisyphus.server.service.ProgramService;
+import info.colinhan.sisyphus.server.service.impl.ProgramServiceImpl;
 import info.colinhan.sisyphus.server.utils.ProgramStatus;
-import info.colinhan.sisyphus.util.ResultOrErrors;
 import info.colinhan.sisyphus.util.ResultOrErrors;
 import info.colinhan.sisyphus.util.ResultWithErrors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class ProgramController {
     @GetMapping("/")
     public ResultOrErrors<GetProgramInfoResponse, String> getPrograms() {
         return ResultOrErrors.of(
-                GetProgramInfoResponse.from(programRepository.findAllByStatus(ProgramStatus.IN_PROGRESS))
+                programService.buildProgramInfo(programRepository.findAllByStatus(ProgramStatus.IN_PROGRESS))
         );
     }
 

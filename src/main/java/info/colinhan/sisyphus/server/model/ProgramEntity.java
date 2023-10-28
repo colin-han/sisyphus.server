@@ -9,8 +9,6 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.sql.Timestamp;
-import java.util.List;
-import java.util.Set;
 
 @Builder
 @NoArgsConstructor
@@ -25,27 +23,13 @@ public class ProgramEntity {
 
     @Column(name = "flow_version_id", nullable = false)
     private long flowVersionId;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "flow_version_id", insertable = false, updatable = false)
-    private FlowVersionEntity flowVersion;
-
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinTable(
-            name = "program_form_versions",
-            joinColumns = @JoinColumn(name = "program_id"),
-            inverseJoinColumns = @JoinColumn(name = "form_version_id")
-    )
-    private Set<FormVersionEntity> formVersions;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private ProgramStatus status;
 
     @Column(name = "created_by", nullable = false)
-    private String createdByUsername;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "created_by", insertable = false, updatable = false)
-    private UserEntity createdBy;
+    private String createdBy;
 
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
@@ -54,9 +38,6 @@ public class ProgramEntity {
     @Column(name = "updated_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
     private Timestamp updatedAt;
-
-    @OneToMany(cascade = CascadeType.REMOVE)
-    private List<ProgramVariableEntity> variables;
 
     public Long getId() {
         return id;
@@ -82,28 +63,13 @@ public class ProgramEntity {
         this.flowVersionId = flowVersionId;
     }
 
-    public FlowVersionEntity getFlowVersion() {
-        return flowVersion;
-    }
 
-    public Set<FormVersionEntity> getFormVersions() {
-        return formVersions;
-    }
-
-    public void setFormVersions(Set<FormVersionEntity> formVersions) {
-        this.formVersions = formVersions;
-    }
-
-    public String getCreatedByUsername() {
-        return createdByUsername;
-    }
-
-    public void setCreatedByUsername(String createdByUsername) {
-        this.createdByUsername = createdByUsername;
-    }
-
-    public UserEntity getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
+    }
+
+    public void setCreatedBy(String createdByUsername) {
+        this.createdBy = createdByUsername;
     }
 
     public Timestamp getCreatedAt() {
@@ -120,13 +86,5 @@ public class ProgramEntity {
 
     public void setUpdatedAt(Timestamp updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<ProgramVariableEntity> getVariables() {
-        return variables;
-    }
-
-    public FlowEntity getFlow() {
-        return this.getFlowVersion().getFlow();
     }
 }

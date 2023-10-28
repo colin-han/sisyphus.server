@@ -29,9 +29,6 @@ public class ProgramVariableEntity {
 
     @Column(name = "program_id", nullable = false)
     private long programId;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "program_id", insertable = false, updatable = false)
-    private ProgramEntity program;
 
     public Long getId() {
         return id;
@@ -63,10 +60,6 @@ public class ProgramVariableEntity {
 
     public void setProgramId(long programId) {
         this.programId = programId;
-    }
-
-    public ProgramEntity getProgram() {
-        return program;
     }
 
     public Timestamp getUpdatedAt() {

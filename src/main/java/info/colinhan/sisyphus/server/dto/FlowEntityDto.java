@@ -27,7 +27,7 @@ public class FlowEntityDto {
         this.id = entity.getId();
         this.name = entity.getName();
         this.description = entity.getDescription();
-        this.createdBy = entity.getCreatedByUsername();
+        this.createdBy = entity.getCreatedBy();
         this.createdAt = entity.getCreatedAt();
         if (version != null) {
             this.code = version.getCode();
@@ -41,7 +41,7 @@ public class FlowEntityDto {
     public FlowVersionEntity toVersion(String username) {
         FlowVersionEntity.FlowVersionEntityBuilder version = FlowVersionEntity.builder()
                 .version(this.version + 1)
-                .createdByUsername(username)
+                .createdBy(username)
                 .createdAt(new Timestamp(new Date().getTime()))
                 .code(this.code);
         if (this.id != null) {

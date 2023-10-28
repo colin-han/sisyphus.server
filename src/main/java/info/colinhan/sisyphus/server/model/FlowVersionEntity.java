@@ -23,9 +23,6 @@ public class FlowVersionEntity {
 
     @Column(name = "flow_id", nullable = false)
     private Long flowId;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "flow_id", insertable = false, updatable = false)
-    private FlowEntity flow;
 
     private int version;
 
@@ -35,10 +32,7 @@ public class FlowVersionEntity {
     private Flow model;
 
     @Column(name = "created_by", nullable = false)
-    private String createdByUsername;
-    @ManyToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "created_by", insertable = false, updatable = false)
-    private UserEntity createdBy;
+    private String createdBy;
 
     @Column(name = "created_at")
     @JdbcTypeCode(SqlTypes.TIMESTAMP)
@@ -68,10 +62,6 @@ public class FlowVersionEntity {
         return flowId;
     }
 
-    public FlowEntity getFlow() {
-        return flow;
-    }
-
     public int getVersion() {
         return version;
     }
@@ -88,20 +78,12 @@ public class FlowVersionEntity {
         this.code = code;
     }
 
-    public String getCreatedByUsername() {
-        return createdByUsername;
-    }
-
-    public void setCreatedByUsername(String createdByUsername) {
-        this.createdByUsername = createdByUsername;
-    }
-
-    public UserEntity getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(UserEntity createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatedBy(String createdByUsername) {
+        this.createdBy = createdByUsername;
     }
 
     public Timestamp getCreatedAt() {

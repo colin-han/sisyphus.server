@@ -50,7 +50,7 @@ public class FlowController {
                 FlowEntity.builder()
                         .name(request.getName())
                         .description(request.getDescription())
-                        .createdByUsername(userPrincipal.getName())
+                        .createdBy(userPrincipal.getName())
                         .createdAt(new Timestamp(new Date().getTime()))
                         .build()
         );
