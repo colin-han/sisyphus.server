@@ -39,6 +39,8 @@ public class ProgramServiceImpl implements ProgramService {
     private FlowRepository flowRepository;
     @Autowired
     private ProgramVariableRepository programVariableRepository;
+    @Autowired
+    private FormRepository formRepository;
 
     @Override
     public GetProgramInfoResponse buildProgramInfo(List<ProgramEntity> programs) {
@@ -112,7 +114,8 @@ public class ProgramServiceImpl implements ProgramService {
 
         List<String> forms = getFormNames(flow);
         for (String formName : forms) {
-            Optional<FormVersionEntity> formVersion = formVersionRepository.findFirstByFormNameOrderByVersionDesc(formName);
+            FormEntity formEntity = formRepository.findFirstByName(formName).orElseThrow();
+            Optional<FormVersionEntity> formVersion = formVersionRepository.findFirstByFormIdOrderByVersionDesc(formEntity.getId());
             if (formVersion.isEmpty()) {
                 return ResultWithErrors.withError(info, new FlowError(
                         "form",
@@ -206,7 +209,10 @@ public class ProgramServiceImpl implements ProgramService {
 
         return collector.getForms().stream()
                 .map(Action::getName)
-                .map(formVersionRepository::findFirstByFormNameOrderByVersionDesc)
+                .map(formRepository::findFirstByName)
+                .map(Optional::get)
+                .map(FormEntity::getId)
+                .map(formVersionRepository::findFirstByFormIdOrderByVersionDesc)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toSet());
