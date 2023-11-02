@@ -1,51 +1,35 @@
 package info.colinhan.sisyphus.server.controller;
 
-import info.colinhan.sisyphus.server.dto.*;
-import info.colinhan.sisyphus.server.exception.E;
-import info.colinhan.sisyphus.server.model.FlowVersionEntity;
+import info.colinhan.sisyphus.server.dto.CreateProgramRequest;
+import info.colinhan.sisyphus.server.dto.FlowError;
+import info.colinhan.sisyphus.server.dto.GetProgramInfoResponse;
+import info.colinhan.sisyphus.server.dto.ProgramInfo;
 import info.colinhan.sisyphus.server.repository.FlowVersionRepository;
-import info.colinhan.sisyphus.server.repository.ProgramRepository;
 import info.colinhan.sisyphus.server.service.ProgramService;
-import info.colinhan.sisyphus.server.service.impl.ProgramServiceImpl;
-import info.colinhan.sisyphus.server.utils.ProgramStatus;
 import info.colinhan.sisyphus.util.ResultOrErrors;
-import info.colinhan.sisyphus.util.ResultWithErrors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipal;
-import java.util.List;
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/programs")
 public class ProgramController {
     @Autowired
-    private ProgramRepository programRepository;
-    @Autowired
-    private FlowVersionRepository flowVersionRepository;
-    @Autowired
     private ProgramService programService;
-
-    @GetMapping("/available-flow")
-    public ResultOrErrors<List<ResultWithErrors<FlowInfo, FlowError>>, String> getAvailableFlow() {
-        return ResultOrErrors.of(
-                programService.getAvailableFlows()
-        );
-    }
 
     @GetMapping("/")
     public ResultOrErrors<GetProgramInfoResponse, String> getPrograms() {
         return ResultOrErrors.of(
-                programService.buildProgramInfo(programRepository.findAllByStatus(ProgramStatus.IN_PROGRESS))
+                programService.buildProgramInfo()
         );
     }
 
     @PutMapping("/")
     public ResultOrErrors<ProgramInfo, FlowError> createProgram(
             @RequestBody CreateProgramRequest request,
-            UserPrincipal userPrincipal
+            Principal userPrincipal
     ) {
-        FlowVersionEntity version = E.assertPresent(flowVersionRepository.findOneByFlowIdAndVersion(request.getFlowId(), request.getVersion()));
-        return programService.createProgram(version, request.getName(), userPrincipal.getName());
+        return programService.createProgram(request, userPrincipal.getName());
     }
 }

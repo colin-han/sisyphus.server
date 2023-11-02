@@ -1,5 +1,6 @@
 package info.colinhan.sisyphus.server.model;
 
+import info.colinhan.sisyphus.jacal.converter.FormConverter;
 import info.colinhan.sisyphus.jacal.model.Form;
 import info.colinhan.sisyphus.server.model.converter.FlowConverter;
 import jakarta.persistence.*;
@@ -27,7 +28,7 @@ public class FormVersionEntity {
     private int version;
 
     private String code;
-    @Convert(converter = FlowConverter.class)
+    @Convert(converter = FormConverter.class)
     private Form model;
 
     @Column(name = "created_by", nullable = false)

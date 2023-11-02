@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,8 +18,12 @@ public class ProgramInfo {
     private long id;
     private String name;
     private List<String> variables;
+    private Timestamp updatedAt;
 
     public static ProgramInfo from(ProgramEntity program) {
-        return new ProgramInfo(program.getId(), program.getName(), Collections.emptyList());
+        return new ProgramInfo(program.getId(),
+                program.getName(),
+                Collections.emptyList(),
+                program.getUpdatedAt());
     }
 }
